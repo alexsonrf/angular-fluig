@@ -1,0 +1,105 @@
+<html ng-app="TestApp">
+
+    <head>
+
+        <link rel="stylesheet" type="text/css" href="portal/resources/style-guide/css/fluig-style-guide.min.css">
+        <script src="portal/resources/js/jquery/jquery.js"></script>
+        <script src="portal/resources/js/jquery/jquery-ui.min.js"></script>
+        <script src="portal/resources/js/mustache/mustache-min.js"></script>
+        <script src="portal/resources/style-guide/js/fluig-style-guide.min.js"></script>
+        <script src="webdesk/vcXMLRPC.js"></script>
+
+
+        <script src="../../bower_components/angular/angular.js"></script>
+        <script src="../../bower_components/angular-locale-pt-br/angular-locale_pt-br.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="../../releases/css/angular-fluig.css">
+        <script src="../../releases/angular-fluig-standalone.js"></script>
+
+
+        <script type="text/javascript" src="controller.js"></script>
+
+        <link type="text/css" rel="stylesheet" href="custom.css" />
+
+        <script type="text/javascript" src="custom.js"></script>
+
+        <title>Test</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    </head>
+
+    <body ng-controller="TestController" id="controller">
+        <div class="fluig-style-guide">
+            <div class="container">
+                <form class="form" name="form" fluig-header>
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Masks</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="money">Money:</label>
+                                    <input name="money" class="form-control" ng-model="model.money" fluig-money-mask fluig-required="true" max="100" min="10">
+                                    <p>{{form.money.$error}}</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="date" class="control-label">Date:</label>
+                                    <input name="date" class="form-control" fluig-date-mask ng-model="model.date" fluig-required="true" fluig-error="form.date.$error">
+                                    <p>{{form.date.$error}}</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="switch" class="control-label">Switch:</label>
+                                    <input type="checkbox" name="switch" fluig-switch ng-model="model.switch" fluig-error="form.switch.$error">
+                                    <p>{{form.switch.$error}}</p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="autocomplete" class="control-label">Autocomplete:</label>
+                                    <input class="form-control" name="autocomplete" fluig-autocomplete="autocompleteJson" ng-model="model.autocomplete" fluig-error="form.autocomplete.$error">
+                                    <p>{{form.autocomplete.$error}}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Utils</h3>
+                        </div>
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Model</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p>form.$valid = {{form.$valid}}</p>
+                            <p>form.$error.required = {{!!form.$error.required}}</p>
+                            <pre>{{model | json}}</pre>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+    </body>
+
+</html>

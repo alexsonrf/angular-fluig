@@ -1,0 +1,18 @@
+'use strict';
+
+var m = angular.module('fluig.global.masks', [
+        require('../helpers'),
+    ])
+    .directive('fluigDateMask', require('./date/date'))
+    .directive('fluigMoneyMask', require('./money/money'))
+    .directive('fluigNumberMask', require('./number/number'))
+    .directive('fluigPercentageMask', require('./percentage/percentage'))
+    .directive('fluigScientificNotationMask', require('./scientific-notation/scientific-notation'))
+    .directive('fluigTimeMask', require('./time/time'))
+    .directive('fluigCreditCard', require('./credit-card/credit-card'))
+
+    .filter('percentage', require('./percentage/percentage-filter'))
+    .filter('time', require('./time/time-filter'))
+    
+
+module.exports = m.name;
