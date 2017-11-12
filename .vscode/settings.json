@@ -1,11 +1,10 @@
 // Place your settings in this file to overwrite default and user settings.
 {
   "files.exclude": {
-    "bower_components/": false,
-    "node_modules": false,
+    "bower_components/": true,
+    "node_modules": true,
     // "releases": false,
-    "test": false,
-    "config": false,
-    "coverage": false
+    "config": true,
+    "coverage": true
   }
 }

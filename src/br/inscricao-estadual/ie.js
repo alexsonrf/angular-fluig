@@ -3,7 +3,7 @@
 var StringMask = require('string-mask');
 var BrV = require('br-validations');
 
-function BrIeMaskDirective($parse) {
+function FluigIeMaskDirective($parse) {
 	var ieMasks = {
 		'AC': [{mask: new StringMask('00.000.000/000-00')}],
 		'AL': [{mask: new StringMask('000000000')}],
@@ -86,7 +86,7 @@ function BrIeMaskDirective($parse) {
 		restrict: 'A',
 		require: 'ngModel',
 		link: function(scope, element, attrs, ctrl) {
-			var state = ($parse(attrs.uiBrIeMask)(scope) || '').toUpperCase();
+			var state = ($parse(attrs.fluigIeMask)(scope) || '').toUpperCase();
 
 			function formatter(value) {
 				if (ctrl.$isEmpty(value)) {
@@ -123,7 +123,7 @@ function BrIeMaskDirective($parse) {
 				return ctrl.$isEmpty(modelValue) || BrV.ie(state).validate(modelValue);
 			};
 
-			scope.$watch(attrs.uiBrIeMask, function(newState) {
+			scope.$watch(attrs.fluigIeMask, function(newState) {
 				state = (newState || '').toUpperCase();
 
 				parser(ctrl.$viewValue);
@@ -132,6 +132,6 @@ function BrIeMaskDirective($parse) {
 		}
 	};
 }
-BrIeMaskDirective.$inject = ['$parse'];
+FluigIeMaskDirective.$inject = ['$parse'];
 
-module.exports = BrIeMaskDirective;
+module.exports = FluigIeMaskDirective;

@@ -14,7 +14,7 @@ module.exports = {
 			return format(cleanValue);
 		},
 		validations: {
-			brBoletoBancario: function (value) {
+			boletoBancario: function (value) {
 				return value.length === 47;
 			}
 		}
@@ -23,7 +23,7 @@ module.exports = {
 }
 
 function format (value) {
-	if (value.length === 0) {
+	if (!value || value.length === 0) {
 		return value;
 	}
 

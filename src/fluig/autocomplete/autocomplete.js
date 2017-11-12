@@ -1,6 +1,6 @@
 'use strict';
 
-function AutocompleteDirective($locale, $window, $timeout) {
+function AutocompleteDirective($locale, $window, $timeout, $compile) {
 
     return {
         restrict: 'A',
@@ -213,10 +213,15 @@ function AutocompleteDirective($locale, $window, $timeout) {
 
             ctrl.$formatters.push(formatter);
 
+            var template = $compile('<div class="input-group" ><span class="input-group-addon"><i class="fluigicon fluigicon-search"></i></span></div>')(scope);
+
+            element.after(template);
+            template.append(element);
+
         }
     };
 }
 
-AutocompleteDirective.$inject = ['$locale', '$window', '$timeout'];
+AutocompleteDirective.$inject = ['$locale', '$window', '$timeout', '$compile'];
 
 module.exports = AutocompleteDirective;

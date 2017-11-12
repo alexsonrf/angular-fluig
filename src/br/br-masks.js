@@ -16,7 +16,7 @@ var m = angular.module('fluig.masks.br', [
     .filter('cpf', require('./cpf/cpf').filter)
 
     .directive('fluigCpfCnpjMask', require('./cpf-cnpj/cpf-cnpj').directive)
-    .filter('cpfcnpj', require('./cpf-cnpj/cpf-cnpj').filter)
+    .filter('cpfCnpj', require('./cpf-cnpj/cpf-cnpj').filter)
 
     .directive('fluigIeMask', require('./inscricao-estadual/ie'))
 
@@ -26,7 +26,7 @@ var m = angular.module('fluig.masks.br', [
     .directive('fluigCarPlateMask', require('./car-plate/car-plate').directive)
     .filter('carPlate', require('./car-plate/car-plate').filter)
 
-    .directive('fluigPhoneMask', require('./phone/br-phone').directive)
+    .directive('fluigBrPhoneMask', require('./phone/br-phone').directive)
     .filter('brPhone', require('./phone/br-phone').filter)
 
     

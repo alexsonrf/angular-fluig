@@ -29,15 +29,15 @@ function PercentageMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
                 decimalMask: 2
             };
 
-            if (angular.isDefined(attrs.uiHideGroupSep)) {
+            if (angular.isDefined(attrs.hideGroupSep)) {
                 thousandsDelimiter = '';
             }
 
-            if (angular.isDefined(attrs.uiHideSpace)) {
+            if (angular.isDefined(attrs.hideSpace)) {
                 hideSpace = true;
             }
 
-            if (angular.isDefined(attrs.uiPercentageValue)) {
+            if (angular.isDefined(attrs.percentageValue)) {
                 modelValue.multiplier = 1;
                 modelValue.decimalMask = 0;
             }
@@ -90,7 +90,7 @@ function PercentageMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
                 scope.$watch(attrs.fluigPercentageMask, function(_decimals) {
                     decimals = isNaN(_decimals) ? 2 : _decimals;
 
-                    if (angular.isDefined(attrs.uiPercentageValue)) {
+                    if (angular.isDefined(attrs.percentageValue)) {
                         modelValue.multiplier = 1;
                         modelValue.decimalMask = 0;
                     }

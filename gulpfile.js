@@ -29,7 +29,7 @@ var header = ['/**',
 ].join('\n');
 
 gulp.task('clean', function () {
-    return gulp.src(['./releases'])
+    return gulp.src(['./build'])
         .pipe(rimraf({
             force: true
         }));
@@ -38,7 +38,7 @@ gulp.task('clean', function () {
 
 gulp.task('copy', function () {
     gulp.src(['./src/assets/**/*'])
-        .pipe(gulp.dest('./releases'));
+        .pipe(gulp.dest('./build'));
 
 });
 
@@ -57,18 +57,18 @@ gulp.task('build-dependencies', function () {
         .bundle()
         .pipe(source('angular-fluig-dependencies.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('./releases/'))
+        .pipe(gulp.dest('./build/'))
         .pipe(plugins.uglify())
         .pipe(plugins.rename({
             extname: '.min.js'
         }))
-        .pipe(gulp.dest('./releases/'));
+        .pipe(gulp.dest('./build/'));
 });
 
 gulp.task('build', ['copy', 'build-dependencies'], function () {
 
     gulp.src(['./src/assets/**/*'])
-        .pipe(gulp.dest('./releases'));
+        .pipe(gulp.dest('./build'));
 
     var files = [{
         fileName: 'angular-fluig.js',
@@ -106,12 +106,12 @@ gulp.task('build', ['copy', 'build-dependencies'], function () {
             .pipe(plugins.header(header, {
                 pkg: pkg
             }))
-            .pipe(gulp.dest('./releases/'))
+            .pipe(gulp.dest('./build/'))
             .pipe(plugins.uglify())
             .pipe(plugins.rename({
                 extname: '.min.js'
             }))
-            .pipe(gulp.dest('./releases/'));
+            .pipe(gulp.dest('./build/'));
     });
 
     return mergeStream(tasks);
@@ -174,7 +174,7 @@ gulp.task('bower-clone', ['build'], function (done) {
 gulp.task('bower-commit', ['getVersion', 'bower-clone'], function () {
     return mergeStream(
             bumpVersion(bowerConfig.path),
-            gulp.src('./releases/**/*.*')
+            gulp.src('./build/**/*.*')
             .pipe(gulp.dest(bowerConfig.path))
         )
         .pipe(plugins.git.add({

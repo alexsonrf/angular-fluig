@@ -25,7 +25,7 @@ function ScientificNotationMaskDirective($locale, $parse) {
 		restrict: 'A',
 		require: 'ngModel',
 		link: function(scope, element, attrs, ctrl) {
-			var decimals = $parse(attrs.uiScientificNotationMask)(scope);
+			var decimals = $parse(attrs.fluigScientificNotationMask)(scope);
 
 			if (isNaN(decimals)) {
 				decimals = defaultPrecision;

@@ -28,6 +28,8 @@ module.exports = {
 }
 
 function format(value) {
+
+	if (!value) return value;
 	var formatedValue;
 
 	if (value.length > 11) {
