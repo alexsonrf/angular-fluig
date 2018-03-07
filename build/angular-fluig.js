@@ -1,7 +1,7 @@
 /**
  * angular-fluig
  * A list of AngularJS services, directives, filters, utilities an resources for Fluig
- * @version v1.0.2
+ * @version v1.0.3
  * @link 
  * @license MIT
  */
@@ -889,7 +889,10 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
         require: '?ngModel',
         scope: {
             showDisabled: "@",
-            maxDate: "="
+            minDate: "=",
+            maxDate: "=",
+            disabledDates: '='
+
         },
         link: function (scope, element, attrs, ctrl) {
 
@@ -898,10 +901,12 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             var dt = FLUIGC.calendar(element, {
                 pickDate: attrs.pickDate,
                 pickTime: attrs.pickTime,
+                disabledDates: scope.disabledDates,
+                minDate: scope.minDate,
                 maxDate: scope.maxDate,
                 minuteStepping: attrs.minuteStepping,
-                sideBySide: true,
-                useCurrent: false
+                sideBySide: attrs.sideBySide,
+                useCurrent: attrs.useCurrent
             });
 
             if (scope.showDisabled) {
@@ -1790,11 +1795,11 @@ module.exports = TimeFilter;
 
 var StringMask = require('string-mask');
 
-module.exports = function TimeMaskDirective() {
+function TimeMaskDirective($timeout) {
     return {
         restrict: 'A',
         require: 'ngModel',
-        link: function(scope, element, attrs, ctrl) {
+        link: function (scope, element, attrs, ctrl) {
 
             if (attrs.fluigTimeMask === "false") return;
 
@@ -1832,15 +1837,22 @@ module.exports = function TimeMaskDirective() {
                     ctrl.$render();
                 }
 
+                var start = element[0].selectionStart;
+                var end = element[0].selectionEnd + viewValue.length - value.length;
+
+                $timeout(function () {
+                    element[0].setSelectionRange(start, start);
+                });
+
                 return modelValue;
             });
 
-            ctrl.$validators.time = function(modelValue) {
+            ctrl.$validators.time = function (modelValue) {
                 if (ctrl.$isEmpty(modelValue)) {
                     return true;
                 }
 
-                var splittedValue = modelValue.toString().split(/:/).filter(function(v) {
+                var splittedValue = modelValue.toString().split(/:/).filter(function (v) {
                     return !!v;
                 });
 
@@ -1853,7 +1865,11 @@ module.exports = function TimeMaskDirective() {
             };
         }
     };
-};
+}
+
+TimeMaskDirective.$inject = ['$timeout'];
+
+module.exports = TimeMaskDirective;
 },{"string-mask":undefined}],33:[function(require,module,exports){
 'use strict';
 

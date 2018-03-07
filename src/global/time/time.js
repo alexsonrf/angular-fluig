@@ -2,11 +2,11 @@
 
 var StringMask = require('string-mask');
 
-module.exports = function TimeMaskDirective() {
+function TimeMaskDirective($timeout) {
     return {
         restrict: 'A',
         require: 'ngModel',
-        link: function(scope, element, attrs, ctrl) {
+        link: function (scope, element, attrs, ctrl) {
 
             if (attrs.fluigTimeMask === "false") return;
 
@@ -44,15 +44,22 @@ module.exports = function TimeMaskDirective() {
                     ctrl.$render();
                 }
 
+                var start = element[0].selectionStart;
+                var end = element[0].selectionEnd + viewValue.length - value.length;
+
+                $timeout(function () {
+                    element[0].setSelectionRange(start, start);
+                });
+
                 return modelValue;
             });
 
-            ctrl.$validators.time = function(modelValue) {
+            ctrl.$validators.time = function (modelValue) {
                 if (ctrl.$isEmpty(modelValue)) {
                     return true;
                 }
 
-                var splittedValue = modelValue.toString().split(/:/).filter(function(v) {
+                var splittedValue = modelValue.toString().split(/:/).filter(function (v) {
                     return !!v;
                 });
 
@@ -65,4 +72,8 @@ module.exports = function TimeMaskDirective() {
             };
         }
     };
-};
+}
+
+TimeMaskDirective.$inject = ['$timeout'];
+
+module.exports = TimeMaskDirective;

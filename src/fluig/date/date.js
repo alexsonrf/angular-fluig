@@ -6,7 +6,10 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
         require: '?ngModel',
         scope: {
             showDisabled: "@",
-            maxDate: "="
+            minDate: "=",
+            maxDate: "=",
+            disabledDates: '='
+
         },
         link: function (scope, element, attrs, ctrl) {
 
@@ -15,10 +18,12 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             var dt = FLUIGC.calendar(element, {
                 pickDate: attrs.pickDate,
                 pickTime: attrs.pickTime,
+                disabledDates: scope.disabledDates,
+                minDate: scope.minDate,
                 maxDate: scope.maxDate,
                 minuteStepping: attrs.minuteStepping,
-                sideBySide: true,
-                useCurrent: false
+                sideBySide: attrs.sideBySide,
+                useCurrent: attrs.useCurrent
             });
 
             if (scope.showDisabled) {
