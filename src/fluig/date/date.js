@@ -6,9 +6,12 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
         require: '?ngModel',
         scope: {
             showDisabled: "@",
+            defaultDate: "=",
             minDate: "=",
             maxDate: "=",
-            disabledDates: '='
+            useCurrent: '@',
+            disabledDates: '=',
+            sideBySide: '@',
 
         },
         link: function (scope, element, attrs, ctrl) {
@@ -21,10 +24,11 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                 disabledDates: scope.disabledDates,
                 minDate: scope.minDate,
                 maxDate: scope.maxDate,
+                defaultDate: scope.defaultDate,
                 minuteStepping: attrs.minuteStepping,
-                sideBySide: attrs.sideBySide,
-                useCurrent: attrs.useCurrent
-            });
+                sideBySide: scope.sideBySide,
+                useCurrent: scope.useCurrent == 'false' ? false : true
+             });
 
             if (scope.showDisabled) {
 

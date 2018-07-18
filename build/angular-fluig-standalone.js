@@ -5,7 +5,7 @@
  * @link 
  * @license MIT
  */
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /**
  * br-validations
  * A library of validations applicable to several Brazilian data like I.E., CNPJ, CPF and others
@@ -1156,14 +1156,14 @@ var cpfPattern = new StringMask('000.000.000-00');
 module.exports = {
 	directive: maskFactory({
 		clearValue: function (rawValue) {
-			return rawValue.replace(/[^\d]/g, '').slice(0, 11);
+			return String(rawValue).replace(/[^\d]/g, '').slice(0, 11);
 		},
 		format: function (cleanValue) {
-			return format(cleanValue);
+			return format(String(cleanValue));
 		},
 		validations: {
 			cpf: function (value) {
-				return BrV.cpf.validate(value);
+				return BrV.cpf.validate(String(value));
 			}
 		}
 	}),
@@ -1171,7 +1171,7 @@ module.exports = {
 }
 
 function format(value) {
-	return (cpfPattern.apply(value) || '').trim().replace(/[^0-9]$/, '');
+	return (cpfPattern.apply(String(value)) || '').trim().replace(/[^0-9]$/, '');
 }
 
 function CpfFilter($filter) {
@@ -1786,9 +1786,12 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
         require: '?ngModel',
         scope: {
             showDisabled: "@",
+            defaultDate: "=",
             minDate: "=",
             maxDate: "=",
-            disabledDates: '='
+            useCurrent: '@',
+            disabledDates: '=',
+            sideBySide: '@',
 
         },
         link: function (scope, element, attrs, ctrl) {
@@ -1801,10 +1804,11 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                 disabledDates: scope.disabledDates,
                 minDate: scope.minDate,
                 maxDate: scope.maxDate,
+                defaultDate: scope.defaultDate,
                 minuteStepping: attrs.minuteStepping,
-                sideBySide: attrs.sideBySide,
-                useCurrent: attrs.useCurrent
-            });
+                sideBySide: scope.sideBySide,
+                useCurrent: scope.useCurrent == 'false' ? false : true
+             });
 
             if (scope.showDisabled) {
 
