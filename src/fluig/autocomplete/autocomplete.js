@@ -32,7 +32,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
             scope.fluigAutocompleteLimit = scope.fluigAutocompleteLimit || 100;
             scope.fluigAutocompleteType = scope.fluigAutocompleteType || 'autocomplete';
             scope.minLength = Number(attrs.minLength) || 0;
-            scope.searchTimeout = attrs.searchTimeout || 5000;
+            scope.searchTimeout = attrs.searchTimeout || 500;
 
             element.on('focus', function () {
 
@@ -124,7 +124,9 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
                 }
 
                 if (scope.dataset) {
-                    var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&searchField=" + scope.displayKey + "&filterFields=" + filterFields + "&resultFields=" + resultFields + "&";
+                    var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&searchField=" + scope.displayKey + "&filterFields=" + filterFields + "&resultFields=" + resultFields + "&limit=" + scope.fluigAutocompleteLimit + "&";
+
+                    console.log(restUrl)
 
                     // var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&";
 
@@ -213,7 +215,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
 
             ctrl.$formatters.push(formatter);
 
-            var template = $compile('<div class="input-group" ><span class="input-group-addon"><i class="fluigicon fluigicon-search"></i></span></div>')(scope);
+            var template = $compile('<div class="input-group"><span class="input-group-addon"><i class="fluigicon fluigicon-search"></i></span></div>')(scope);
 
             element.after(template);
             template.append(element);

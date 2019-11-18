@@ -10,6 +10,7 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             minDate: "=",
             maxDate: "=",
             useCurrent: '@',
+            showOnStart: '@',
             disabledDates: '=',
             sideBySide: '@',
 
@@ -28,7 +29,11 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                 minuteStepping: attrs.minuteStepping,
                 sideBySide: scope.sideBySide,
                 useCurrent: scope.useCurrent == 'false' ? false : true
-             });
+            });
+
+            if (scope.showOnStart == 'true') {
+                dt.show();
+            }
 
             if (scope.showDisabled) {
 
@@ -44,7 +49,7 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                     if (!attrs.pickTime) {
                         date.setHours(23, 59, 59);
                     }
-                    ctrl.$setViewValue(date);
+                    ctrl.$setViewValue(date.getTime());
                 }
             });
 
@@ -52,7 +57,7 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                 if (ctrl.$isEmpty(value)) {
                     return value;
                 }
-                dt.setDate(new Date(value));
+                dt.setDate(new Date(Number(value)));
                 return element.val();
             }
 

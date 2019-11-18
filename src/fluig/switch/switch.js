@@ -5,7 +5,7 @@ function SwitchDirective($compile, $timeout) {
     return {
         restrict: 'A',
         require: '?ngModel',
-        link: function(scope, element, attrs, ctrl) {
+        link: function (scope, element, attrs, ctrl) {
 
             if (!ctrl) {
                 console.error('ngModel não informado para o elemento:', element[0]);
@@ -19,16 +19,45 @@ function SwitchDirective($compile, $timeout) {
 
             template.hide();
 
-            $timeout(function() {
+            $timeout(function () {
 
-                FLUIGC.switcher.init(element, { "state": ctrl.$modelValue });
+                console.log('switch', ctrl.$modelValue)
 
-                FLUIGC.switcher.onChange(element, function(event, state) {
+                FLUIGC.switcher.init(element, {
+                    "state": ctrl.$modelValue
+                });
+
+                if (ctrl.$modelValue == true || ctrl.$modelValue == 'true') {
+                    
+                    let isReadOnly = false;
+                    let isDisabled = false;
+                    if ($(element).attr('readonly') == 'readonly') {
+                        isReadOnly = true;
+                        FLUIGC.switcher.isReadOnly(element, false);
+                    }
+                    if ($(element).attr('disabled') == 'disabled') {
+                        isDisabled = true;
+                        FLUIGC.switcher.enable(element);
+                    }
+                    $timeout(() => {
+                        FLUIGC.switcher.setTrue(element);
+
+                        FLUIGC.switcher.isReadOnly(element, isReadOnly);
+
+                        if (isDisabled) {
+                            FLUIGC.switcher.disable(element);
+                        }
+                    })
+
+                }
+
+                FLUIGC.switcher.onChange(element, function (event, state) {
+                    console.log('switch onChange', state)
                     ctrl.$setViewValue(state);
                     ctrl.$render();
 
                 });
-                $timeout(function() {
+                $timeout(function () {
 
                     template.fadeIn();
                 }, 10);

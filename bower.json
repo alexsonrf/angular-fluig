@@ -1,5 +1,5 @@
 {
-  "name": "angular.fluig",
+  "name": "ng-fluig",
   "description": "A list of AngularJS services, directives, filters, utilities an resources built to Fluig",
   "main": "index.js",
   "authors": [

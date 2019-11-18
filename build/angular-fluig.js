@@ -1,5 +1,5 @@
 /**
- * angular-fluig
+ * ng-fluig
  * A list of AngularJS services, directives, filters, utilities an resources for Fluig
  * @version v1.0.3
  * @link 
@@ -90,7 +90,7 @@ var m = angular.module('fluig.masks.br', [
     
 
 module.exports = m.name;
-},{"../helpers":33,"./boleto-bancario/boleto-bancario":2,"./car-plate/car-plate":4,"./cep/cep":5,"./cnpj/cnpj":6,"./cpf-cnpj/cpf-cnpj":7,"./cpf/cpf":8,"./inscricao-estadual/ie":9,"./nfe/nfe":10,"./phone/br-phone":11}],4:[function(require,module,exports){
+},{"../helpers":34,"./boleto-bancario/boleto-bancario":2,"./car-plate/car-plate":4,"./cep/cep":5,"./cnpj/cnpj":6,"./cpf-cnpj/cpf-cnpj":7,"./cpf/cpf":8,"./inscricao-estadual/ie":9,"./nfe/nfe":10,"./phone/br-phone":11}],4:[function(require,module,exports){
 'use strict';
 
 var StringMask = require('string-mask');
@@ -173,14 +173,14 @@ var cnpjPattern = new StringMask('00.000.000\/0000-00');
 module.exports = {
 	directive: maskFactory({
 		clearValue: function (rawValue) {
-			return rawValue.replace(/[^\d]/g, '').slice(0, 14);
+			return String(rawValue).replace(/[^\d]/g, '').slice(0, 14);
 		},
 		format: function (cleanValue) {
 			return format(cleanValue);
 		},
 		validations: {
 			cnpj: function (value) {
-				return BrV.cnpj.validate(value);
+				return BrV.cnpj.validate(String(value));
 			}
 		}
 	}),
@@ -210,17 +210,17 @@ var cpfPattern = new StringMask('000.000.000-00');
 module.exports = {
 	directive: maskFactory({
 		clearValue: function (rawValue) {
-			return rawValue.replace(/[^\d]/g, '').slice(0, 14);
+			return String(rawValue).replace(/[^\d]/g, '').slice(0, 14);
 		},
 		format: function (cleanValue) {
 			return format(cleanValue);
 		},
 		validations: {
 			cpf: function (value) {
-				return value.length > 11 || BrV.cpf.validate(value);
+				return value.length > 11 || BrV.cpf.validate(String(value));
 			},
 			cnpj: function (value) {
-				return value.length <= 11 || BrV.cnpj.validate(value);
+				return value.length <= 11 || BrV.cnpj.validate(String(value));
 			}
 		}
 	}),
@@ -470,6 +470,8 @@ var maskFactory = require('mask-factory');
  */
 var phoneMask8D = new StringMask('(00) 0000-0000'),
 	phoneMask9D = new StringMask('(00) 00000-0000'),
+	phoneMask8DSemDDD = new StringMask('0000-0000'),
+	phoneMask9DSemDDD = new StringMask('00000-0000'),
 	phoneMask0800 = new StringMask('0000-000-0000');
 
 module.exports = {
@@ -488,7 +490,7 @@ module.exports = {
 		validations: {
 			phoneNumber: function (value) {
 				var valueLength = value && value.toString().length;
-				return valueLength === 10 || valueLength === 11;
+				return valueLength === 8 || valueLength === 9 || valueLength === 10 || valueLength === 11;
 			}
 		}
 	}),
@@ -496,12 +498,16 @@ module.exports = {
 }
 
 function format(value) {
-	
+
 	if (!value) return "";
 
 	var formatedValue;
 	if (value.indexOf('0800') === 0) {
 		formatedValue = phoneMask0800.apply(value);
+	} else if (value.length < 9) {
+		formatedValue = phoneMask8DSemDDD.apply(value) || '';
+	} else if (value.length < 10) {
+		formatedValue = phoneMask9DSemDDD.apply(value) || '';
 	} else if (value.length < 11) {
 		formatedValue = phoneMask8D.apply(value) || '';
 	} else {
@@ -526,7 +532,7 @@ var m = angular.module('angular.filters', [
     .filter('pagination', require('./pagination/pagination'))
 
 module.exports = m.name;
-},{"../helpers":33,"./pagination/pagination":13}],13:[function(require,module,exports){
+},{"../helpers":34,"./pagination/pagination":13}],13:[function(require,module,exports){
 'use strict';
 
 function PaginationFilter() {
@@ -575,7 +581,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
             scope.fluigAutocompleteLimit = scope.fluigAutocompleteLimit || 100;
             scope.fluigAutocompleteType = scope.fluigAutocompleteType || 'autocomplete';
             scope.minLength = Number(attrs.minLength) || 0;
-            scope.searchTimeout = attrs.searchTimeout || 5000;
+            scope.searchTimeout = attrs.searchTimeout || 500;
 
             element.on('focus', function () {
 
@@ -667,7 +673,9 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
                 }
 
                 if (scope.dataset) {
-                    var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&searchField=" + scope.displayKey + "&filterFields=" + filterFields + "&resultFields=" + resultFields + "&";
+                    var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&searchField=" + scope.displayKey + "&filterFields=" + filterFields + "&resultFields=" + resultFields + "&limit=" + scope.fluigAutocompleteLimit + "&";
+
+                    console.log(restUrl)
 
                     // var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&";
 
@@ -756,7 +764,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
 
             ctrl.$formatters.push(formatter);
 
-            var template = $compile('<div class="input-group" ><span class="input-group-addon"><i class="fluigicon fluigicon-search"></i></span></div>')(scope);
+            var template = $compile('<div class="input-group"><span class="input-group-addon"><i class="fluigicon fluigicon-search"></i></span></div>')(scope);
 
             element.after(template);
             template.append(element);
@@ -893,6 +901,7 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             minDate: "=",
             maxDate: "=",
             useCurrent: '@',
+            showOnStart: '@',
             disabledDates: '=',
             sideBySide: '@',
 
@@ -911,7 +920,11 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                 minuteStepping: attrs.minuteStepping,
                 sideBySide: scope.sideBySide,
                 useCurrent: scope.useCurrent == 'false' ? false : true
-             });
+            });
+
+            if (scope.showOnStart == 'true') {
+                dt.show();
+            }
 
             if (scope.showDisabled) {
 
@@ -927,7 +940,7 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                     if (!attrs.pickTime) {
                         date.setHours(23, 59, 59);
                     }
-                    ctrl.$setViewValue(date);
+                    ctrl.$setViewValue(date.getTime());
                 }
             });
 
@@ -935,7 +948,7 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
                 if (ctrl.$isEmpty(value)) {
                     return value;
                 }
-                dt.setDate(new Date(value));
+                dt.setDate(new Date(Number(value)));
                 return element.val();
             }
 
@@ -969,7 +982,7 @@ var m = angular.module('angular.fluig.utils', [
     .directive('fluigPopover', require('./popover/popover'))
 
 module.exports = m.name;
-},{"../helpers":33,"./autocomplete/autocomplete":14,"./chart/chart":15,"./date/date":16,"./header/header":18,"./popover/popover":19,"./required/required":20,"./switch/switch":21}],18:[function(require,module,exports){
+},{"../helpers":34,"./autocomplete/autocomplete":14,"./chart/chart":15,"./date/date":16,"./header/header":18,"./popover/popover":19,"./required/required":20,"./switch/switch":21}],18:[function(require,module,exports){
 'use strict';
 
 function HeaderDirective($locale) {
@@ -977,17 +990,24 @@ function HeaderDirective($locale) {
     return {
         restrict: 'A',
         require: '?ngModel',
-        link: function(scope, element, attrs, ctrl) {
+        link: function (scope, element, attrs, ctrl) {
 
             var title = attrs.fluigHeader || $(document).find("title").text();
             var logo = attrs.logo || '/portal/resources/images/logo.png';
+            var height = attrs.height || '80';
 
             var html = '<div class="page-header row">';
             var h = "h1";
 
-            if (title.length > 54) { h = "h4"; } else if (title.length > 43) { h = "h3"; } else if (title.length > 34) { h = "h2"; }
+            if (title.length > 54) {
+                h = "h4";
+            } else if (title.length > 43) {
+                h = "h3";
+            } else if (title.length > 34) {
+                h = "h2";
+            }
 
-            html += "<img src='" + logo + "' id='logo' class='logo' height='80' alt='Logo' title='Logo' border='0' />";
+            html += "<img src='" + logo + "' id='logo' class='logo' height='" + height + "' alt='Logo' title='Logo' border='0' />";
             html += '<' + h + ' class="title text-center">' + title + '</' + h + '>';
             html += '</div>';
 
@@ -1077,7 +1097,7 @@ function SwitchDirective($compile, $timeout) {
     return {
         restrict: 'A',
         require: '?ngModel',
-        link: function(scope, element, attrs, ctrl) {
+        link: function (scope, element, attrs, ctrl) {
 
             if (!ctrl) {
                 console.error('ngModel não informado para o elemento:', element[0]);
@@ -1091,16 +1111,45 @@ function SwitchDirective($compile, $timeout) {
 
             template.hide();
 
-            $timeout(function() {
+            $timeout(function () {
 
-                FLUIGC.switcher.init(element, { "state": ctrl.$modelValue });
+                console.log('switch', ctrl.$modelValue)
 
-                FLUIGC.switcher.onChange(element, function(event, state) {
+                FLUIGC.switcher.init(element, {
+                    "state": ctrl.$modelValue
+                });
+
+                if (ctrl.$modelValue == true || ctrl.$modelValue == 'true') {
+                    
+                    let isReadOnly = false;
+                    let isDisabled = false;
+                    if ($(element).attr('readonly') == 'readonly') {
+                        isReadOnly = true;
+                        FLUIGC.switcher.isReadOnly(element, false);
+                    }
+                    if ($(element).attr('disabled') == 'disabled') {
+                        isDisabled = true;
+                        FLUIGC.switcher.enable(element);
+                    }
+                    $timeout(() => {
+                        FLUIGC.switcher.setTrue(element);
+
+                        FLUIGC.switcher.isReadOnly(element, isReadOnly);
+
+                        if (isDisabled) {
+                            FLUIGC.switcher.disable(element);
+                        }
+                    })
+
+                }
+
+                FLUIGC.switcher.onChange(element, function (event, state) {
+                    console.log('switch onChange', state)
                     ctrl.$setViewValue(state);
                     ctrl.$render();
 
                 });
-                $timeout(function() {
+                $timeout(function () {
 
                     template.fadeIn();
                 }, 10);
@@ -1229,13 +1278,14 @@ var m = angular.module('fluig.global.masks', [
     .directive('fluigTimeMask', require('./time/time'))
     .directive('fluigCreditCard', require('./credit-card/credit-card'))
     .directive('fluigError', require('./error/error'))
+    .directive('ngName', require('./name/name'))
 
     .filter('percentage', require('./percentage/percentage-filter'))
     .filter('time', require('./time/time-filter'))
 
 
 module.exports = m.name;
-},{"../helpers":33,"./credit-card/credit-card":22,"./error/error":23,"./money/money":26,"./number/number":27,"./percentage/percentage":29,"./percentage/percentage-filter":28,"./scientific-notation/scientific-notation":30,"./time/time":32,"./time/time-filter":31}],26:[function(require,module,exports){
+},{"../helpers":34,"./credit-card/credit-card":22,"./error/error":23,"./money/money":26,"./name/name":27,"./number/number":28,"./percentage/percentage":30,"./percentage/percentage-filter":29,"./scientific-notation/scientific-notation":31,"./time/time":33,"./time/time-filter":32}],26:[function(require,module,exports){
 'use strict';
 
 var StringMask = require('string-mask');
@@ -1386,13 +1436,28 @@ module.exports = MoneyMaskDirective;
 },{"string-mask":undefined,"validators":"validators"}],27:[function(require,module,exports){
 'use strict';
 
+function NgNameDirective($timeout) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs, ctrl) {
+
+            console.log(element.attr('name'));
+            element.attr('name', attrs.ngName);
+        }
+    };
+}
+
+module.exports = NgNameDirective;
+},{}],28:[function(require,module,exports){
+'use strict';
+
 var validators = require('validators');
 
 function NumberMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 	return {
 		restrict: 'A',
 		require: 'ngModel',
-		link: function(scope, element, attrs, ctrl) {
+		link: function (scope, element, attrs, ctrl) {
 			var decimalDelimiter = $locale.NUMBER_FORMATS.DECIMAL_SEP,
 				thousandsDelimiter = $locale.NUMBER_FORMATS.GROUP_SEP,
 				decimals = $parse(attrs.fluigNumberMask)(scope);
@@ -1417,8 +1482,6 @@ function NumberMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 				var formatedValue = viewMask.apply(valueToFormat);
 				var actualNumber = parseFloat(modelMask.apply(valueToFormat));
 
-                console.log(valueToFormat, formatedValue, actualNumber)
-
 				if (angular.isDefined(attrs.fluigNegativeNumber)) {
 					var isNegative = (value[0] === '-'),
 						needsToInvertSign = (value.slice(-1) === '-');
@@ -1430,8 +1493,6 @@ function NumberMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 						formatedValue = '-' + ((actualNumber !== 0) ? formatedValue : '');
 					}
 				}
-
-                console.log(valueToFormat, formatedValue, actualNumber)
 
 				if (ctrl.$viewValue !== formatedValue) {
 					ctrl.$setViewValue(formatedValue);
@@ -1464,7 +1525,7 @@ function NumberMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 			ctrl.$parsers.push(parser);
 
 			if (attrs.fluigNumberMask) {
-				scope.$watch(attrs.fluigNumberMask, function(_decimals) {
+				scope.$watch(attrs.fluigNumberMask, function (_decimals) {
 					decimals = isNaN(_decimals) ? 2 : _decimals;
 					viewMask = NumberMasks.viewMask(decimals, decimalDelimiter, thousandsDelimiter);
 					modelMask = NumberMasks.modelMask(decimals);
@@ -1476,11 +1537,11 @@ function NumberMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 			if (attrs.min) {
 				var minVal;
 
-				ctrl.$validators.min = function(modelValue) {
+				ctrl.$validators.min = function (modelValue) {
 					return validators.minNumber(ctrl, modelValue, minVal);
 				};
 
-				scope.$watch(attrs.min, function(value) {
+				scope.$watch(attrs.min, function (value) {
 					minVal = value;
 					ctrl.$validate();
 				});
@@ -1489,11 +1550,11 @@ function NumberMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 			if (attrs.max) {
 				var maxVal;
 
-				ctrl.$validators.max = function(modelValue) {
+				ctrl.$validators.max = function (modelValue) {
 					return validators.maxNumber(ctrl, modelValue, maxVal);
 				};
 
-				scope.$watch(attrs.max, function(value) {
+				scope.$watch(attrs.max, function (value) {
 					maxVal = value;
 					ctrl.$validate();
 				});
@@ -1504,7 +1565,7 @@ function NumberMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 NumberMaskDirective.$inject = ['$locale', '$parse', 'PreFormatters', 'NumberMasks'];
 
 module.exports = NumberMaskDirective;
-},{"validators":"validators"}],28:[function(require,module,exports){
+},{"validators":"validators"}],29:[function(require,module,exports){
 'use strict';
 
 
@@ -1516,7 +1577,7 @@ function PercentageFilter($filter) {
 PercentageFilter.$inject = ['$filter'];
 
 module.exports = PercentageFilter;
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var validators = require('validators');
@@ -1653,7 +1714,7 @@ function PercentageMaskDirective($locale, $parse, PreFormatters, NumberMasks) {
 PercentageMaskDirective.$inject = ['$locale', '$parse', 'PreFormatters', 'NumberMasks'];
 
 module.exports = PercentageMaskDirective;
-},{"validators":"validators"}],30:[function(require,module,exports){
+},{"validators":"validators"}],31:[function(require,module,exports){
 'use strict';
 
 var StringMask = require('string-mask');
@@ -1775,7 +1836,7 @@ ScientificNotationMaskDirective.$inject = ['$locale', '$parse'];
 
 module.exports = ScientificNotationMaskDirective;
 
-},{"string-mask":undefined}],31:[function(require,module,exports){
+},{"string-mask":undefined}],32:[function(require,module,exports){
 'use strict';
 
 var StringMask = require('string-mask');
@@ -1794,7 +1855,7 @@ function TimeFilter($filter) {
 TimeFilter.$inject = ['$filter'];
 
 module.exports = TimeFilter;
-},{"string-mask":undefined}],32:[function(require,module,exports){
+},{"string-mask":undefined}],33:[function(require,module,exports){
 'use strict';
 
 var StringMask = require('string-mask');
@@ -1874,7 +1935,7 @@ function TimeMaskDirective($timeout) {
 TimeMaskDirective.$inject = ['$timeout'];
 
 module.exports = TimeMaskDirective;
-},{"string-mask":undefined}],33:[function(require,module,exports){
+},{"string-mask":undefined}],34:[function(require,module,exports){
 'use strict';
 
 var StringMask = require('string-mask');
