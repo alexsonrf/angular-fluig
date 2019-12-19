@@ -763,11 +763,12 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
             }
 
             ctrl.$formatters.push(formatter);
+            element.attr('placeholder', 'Digite para buscar...')
 
-            var template = $compile('<div class="input-group"><span class="input-group-addon"><i class="fluigicon fluigicon-search"></i></span></div>')(scope);
+            // var template = $compile('<div class="input-group"><span class="input-group-addon"><i class="fluigicon fluigicon-search"></i></span></div>')(scope);
 
-            element.after(template);
-            template.append(element);
+            // element.after(template);
+            // template.append(element);
 
         }
     };
@@ -1446,6 +1447,8 @@ function NgNameDirective($timeout) {
         }
     };
 }
+
+NgNameDirective.$inject = ['$timeout'];
 
 module.exports = NgNameDirective;
 },{}],28:[function(require,module,exports){

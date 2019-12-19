@@ -11,4 +11,6 @@ function NgNameDirective($timeout) {
     };
 }
 
+NgNameDirective.$inject = ['$timeout'];
+
 module.exports = NgNameDirective;
