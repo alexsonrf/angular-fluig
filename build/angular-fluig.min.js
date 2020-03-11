@@ -997,7 +997,7 @@ function HeaderDirective($locale) {
             var logo = attrs.logo || '/portal/resources/images/logo.png';
             var height = attrs.height || '80';
 
-            var html = '<div class="page-header row">';
+            var html = '<div class="row">';
             var h = "h1";
 
             if (title.length > 54) {
@@ -1008,8 +1008,12 @@ function HeaderDirective($locale) {
                 h = "h2";
             }
 
+            html += '<div class="col-xs-6">';
             html += "<img src='" + logo + "' id='logo' class='logo' height='" + height + "' alt='Logo' title='Logo' border='0' />";
-            html += '<' + h + ' class="title text-center">' + title + '</' + h + '>';
+            html += '</div>';
+            html += '<div class="col-xs-6">';
+            html += '<' + h + ' class="text-right">' + title + '</' + h + '>';
+            html += '</div>';
             html += '</div>';
 
             element.prepend(html);
