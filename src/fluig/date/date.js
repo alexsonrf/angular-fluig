@@ -13,6 +13,8 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             showOnStart: '@',
             disabledDates: '=',
             sideBySide: '@',
+            datePattern: "@",
+            dateLocale: "@"
 
         },
         link: function (scope, element, attrs, ctrl) {
@@ -44,21 +46,28 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             }
 
             element.on('change', function () {
+                console.log('change', dt.getDate());
+                console.log(scope.datePattern, scope.dateLocale);
                 if (dt.getDate()) {
                     var date = new Date(dt.getDate());
                     if (!attrs.pickTime) {
                         date.setHours(23, 59, 59);
                     }
+                    
                     ctrl.$setViewValue(date.getTime());
+                    element.val(FLUIGC.calendar.formatDate(date, scope.datePattern, scope.dateLocale));
                 }
             });
 
             function formatter(value) {
+                
                 if (ctrl.$isEmpty(value)) {
                     return value;
                 }
                 dt.setDate(new Date(Number(value)));
-                return element.val();
+                
+                return FLUIGC.calendar.formatDate(new Date(Number(value)), scope.datePattern, scope.dateLocale);
+                // return element.val();
             }
 
             ctrl.$formatters.push(formatter);
