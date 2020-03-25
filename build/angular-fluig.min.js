@@ -628,10 +628,9 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
             function loadData(arr) {
 
                 return function (txt, fnc) {
-
                     var result, f, filter;
                     result = [],
-                        filter = new RegExp(txt, "i"),
+                        filter = new RegExp((txt.normalize ? txt.normalize("NFD") : txt).replace(/[\u0300-\u036f]/g, ""), "i"),
                         $.each(arr,
                             function (arr, obj) {
                                 var obj2;
@@ -645,8 +644,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
                                     obj2 = obj;
                                 }
 
-                                (
-                                    (scope.displayKey && filter.test(obj2[scope.displayKey])) ||
+                                ((scope.displayKey && filter.test((obj2[scope.displayKey].normalize ? obj2[scope.displayKey].normalize("NFD") : obj2[scope.displayKey]).replace(/[\u0300-\u036f]/g, ""))) ||
                                     (!scope.displayKey && filter.test(JSON.stringify(obj2)))
                                 ) && result.length < scope.fluigAutocompleteLimit && result.push(obj2)
                             }), fnc(result);
@@ -905,6 +903,8 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             showOnStart: '@',
             disabledDates: '=',
             sideBySide: '@',
+            datePattern: "@",
+            dateLocale: "@"
 
         },
         link: function (scope, element, attrs, ctrl) {
@@ -936,21 +936,28 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             }
 
             element.on('change', function () {
+                console.log('change', dt.getDate());
+                console.log(scope.datePattern, scope.dateLocale);
                 if (dt.getDate()) {
                     var date = new Date(dt.getDate());
                     if (!attrs.pickTime) {
                         date.setHours(23, 59, 59);
                     }
+                    
                     ctrl.$setViewValue(date.getTime());
+                    element.val(FLUIGC.calendar.formatDate(date, scope.datePattern, scope.dateLocale));
                 }
             });
 
             function formatter(value) {
+                
                 if (ctrl.$isEmpty(value)) {
                     return value;
                 }
                 dt.setDate(new Date(Number(value)));
-                return element.val();
+                
+                return FLUIGC.calendar.formatDate(new Date(Number(value)), scope.datePattern, scope.dateLocale);
+                // return element.val();
             }
 
             ctrl.$formatters.push(formatter);
