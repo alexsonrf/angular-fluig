@@ -95,7 +95,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
                                     obj2 = obj;
                                 }
 
-                                ((scope.displayKey && filter.test((obj2[scope.displayKey].normalize ? obj2[scope.displayKey].normalize("NFD") : obj2[scope.displayKey]).replace(/[\u0300-\u036f]/g, ""))) ||
+                                ((scope.displayKey && filter.test((String(obj2[scope.displayKey]).normalize ? String(obj2[scope.displayKey]).normalize("NFD") : String(obj2[scope.displayKey])).replace(/[\u0300-\u036f]/g, ""))) ||
                                     (!scope.displayKey && filter.test(JSON.stringify(obj2)))
                                 ) && result.length < scope.fluigAutocompleteLimit && result.push(obj2)
                             }), fnc(result);
