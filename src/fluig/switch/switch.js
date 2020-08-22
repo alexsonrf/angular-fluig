@@ -21,8 +21,6 @@ function SwitchDirective($compile, $timeout) {
 
             $timeout(function () {
 
-                console.log('switch', ctrl.$modelValue)
-
                 FLUIGC.switcher.init(element, {
                     "state": ctrl.$modelValue
                 });
@@ -52,7 +50,6 @@ function SwitchDirective($compile, $timeout) {
                 }
 
                 FLUIGC.switcher.onChange(element, function (event, state) {
-                    console.log('switch onChange', state)
                     ctrl.$setViewValue(state);
                     ctrl.$render();
 

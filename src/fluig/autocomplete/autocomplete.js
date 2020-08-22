@@ -124,10 +124,6 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
                 if (scope.dataset) {
                     var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&searchField=" + scope.displayKey + "&filterFields=" + filterFields + "&resultFields=" + resultFields + "&limit=" + scope.fluigAutocompleteLimit + "&";
 
-                    console.log(restUrl)
-
-                    // var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&";
-
                     var source = {
                         url: restUrl,
                         patternKey: "searchValue",
@@ -177,7 +173,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
 
                         })
                         .on('fluig.autocomplete.itemRemoved', function (result) {
-                            console.log("autocomplete 12")
+                            
                             if (scope.fluigAutocompleteType == 'autocomplete') {
                                 ctrl.$setViewValue();
                             } else {

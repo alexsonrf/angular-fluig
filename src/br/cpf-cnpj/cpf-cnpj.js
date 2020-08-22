@@ -17,10 +17,12 @@ module.exports = {
 		},
 		validations: {
 			cpf: function (value) {
-				return value.length > 11 || BrV.cpf.validate(String(value));
+				
+				return String(value).length > 11 || BrV.cpf.validate(String(value));
 			},
 			cnpj: function (value) {
-				return value.length <= 11 || BrV.cnpj.validate(String(value));
+				
+				return  String(value).length <= 11 || BrV.cnpj.validate(String(value));
 			}
 		}
 	}),

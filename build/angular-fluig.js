@@ -96,7 +96,7 @@ module.exports = m.name;
 var StringMask = require('string-mask');
 var maskFactory = require('mask-factory');
 
-var carPlateMask = new StringMask('UUU-0000');
+var carPlateMask = new StringMask('UUU-0A00');
 
 module.exports = {
 	directive: maskFactory({
@@ -217,10 +217,12 @@ module.exports = {
 		},
 		validations: {
 			cpf: function (value) {
-				return value.length > 11 || BrV.cpf.validate(String(value));
+				
+				return String(value).length > 11 || BrV.cpf.validate(String(value));
 			},
 			cnpj: function (value) {
-				return value.length <= 11 || BrV.cnpj.validate(String(value));
+				
+				return  String(value).length <= 11 || BrV.cnpj.validate(String(value));
 			}
 		}
 	}),
@@ -673,10 +675,6 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
                 if (scope.dataset) {
                     var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&searchField=" + scope.displayKey + "&filterFields=" + filterFields + "&resultFields=" + resultFields + "&limit=" + scope.fluigAutocompleteLimit + "&";
 
-                    console.log(restUrl)
-
-                    // var restUrl = "/api/public/ecm/dataset/search?datasetId=" + scope.dataset + "&";
-
                     var source = {
                         url: restUrl,
                         patternKey: "searchValue",
@@ -726,7 +724,7 @@ function AutocompleteDirective($locale, $window, $timeout, $compile) {
 
                         })
                         .on('fluig.autocomplete.itemRemoved', function (result) {
-                            console.log("autocomplete 12")
+                            
                             if (scope.fluigAutocompleteType == 'autocomplete') {
                                 ctrl.$setViewValue();
                             } else {
@@ -842,10 +840,6 @@ function ChartDirective($locale, $window) {
 
             function createChart() {
 
-                console.log(scope.chartLabels);
-                console.log(scope.chartDatasets);
-                console.log(scope.chartType);
-
                 if (!scope.chartLabels || !scope.chartDatasets || !scope.chartType) return;
 
                 if (chart) {
@@ -936,26 +930,29 @@ function DateMaskDirective($locale, $compile, $timeout, $parse) {
             }
 
             element.on('change', function () {
-                console.log('change', dt.getDate());
-                console.log(scope.datePattern, scope.dateLocale);
+                change()
+            });
+
+            function change() {
+
                 if (dt.getDate()) {
                     var date = new Date(dt.getDate());
                     if (!attrs.pickTime) {
                         date.setHours(23, 59, 59);
                     }
-                    
+
                     ctrl.$setViewValue(date.getTime());
                     element.val(FLUIGC.calendar.formatDate(date, scope.datePattern, scope.dateLocale));
                 }
-            });
-
+            }
             function formatter(value) {
-                
+
                 if (ctrl.$isEmpty(value)) {
                     return value;
                 }
+
                 dt.setDate(new Date(Number(value)));
-                
+
                 return FLUIGC.calendar.formatDate(new Date(Number(value)), scope.datePattern, scope.dateLocale);
                 // return element.val();
             }
@@ -1125,8 +1122,6 @@ function SwitchDirective($compile, $timeout) {
 
             $timeout(function () {
 
-                console.log('switch', ctrl.$modelValue)
-
                 FLUIGC.switcher.init(element, {
                     "state": ctrl.$modelValue
                 });
@@ -1156,7 +1151,6 @@ function SwitchDirective($compile, $timeout) {
                 }
 
                 FLUIGC.switcher.onChange(element, function (event, state) {
-                    console.log('switch onChange', state)
                     ctrl.$setViewValue(state);
                     ctrl.$render();
 
@@ -1207,7 +1201,7 @@ module.exports = maskFactory({
 
 var messages = require('./messages');
 
-function ErrorDirective($compile) {
+function ErrorDirective($compile, $timeout) {
 
     return {
         restrict: 'A',
@@ -1217,6 +1211,7 @@ function ErrorDirective($compile) {
                 console.error('ngModel não informado para o elemento:', element[0]);
                 return;
             }
+
             var watchAttr = attrs.fluigError;
 
             scope.$watchCollection(watchAttr, function (values) {
@@ -1231,6 +1226,7 @@ function ErrorDirective($compile) {
                 });
 
                 element.popover('destroy');
+
                 var label = $("label[for='" + element.attr('name') + "']");
 
                 if (error != '') {
@@ -1255,12 +1251,14 @@ function ErrorDirective($compile) {
     }
 }
 
-ErrorDirective.$inject = ['$compile'];
+ErrorDirective.$inject = ['$compile', '$timeout'];
 
 module.exports = ErrorDirective;
 },{"./messages":24}],24:[function(require,module,exports){
 var messages = {
     "required": "O campo é obrigatório",
+    "minlength": "O tamanho do campo é inferior ao mínimo permitido",
+    "maxlength": "O tamanho do campo é superior ao máximo permitido",
     "min": "O valor informado é inferior ao mínimo",
     "max": "O valor informado é superior ao máximo",
     "cpf": "O CPF informado é inválido",
@@ -1351,6 +1349,7 @@ function MoneyMaskDirective($locale, $parse, $compile, PreFormatters) {
             }
 
             function parser(value) {
+                
                 if (ctrl.$isEmpty(value)) {
                     return value;
                 }
@@ -1448,18 +1447,17 @@ module.exports = MoneyMaskDirective;
 },{"string-mask":undefined,"validators":"validators"}],27:[function(require,module,exports){
 'use strict';
 
-function NgNameDirective($timeout) {
+function NgNameDirective($compile) {
     return {
         restrict: 'A',
         link: function (scope, element, attrs, ctrl) {
-
-            console.log(element.attr('name'));
-            element.attr('name', attrs.ngName);
+            // element.attr('name', attrs.ngName);
+            attrs.$set("name", attrs.ngName);
         }
     };
 }
 
-NgNameDirective.$inject = ['$timeout'];
+NgNameDirective.$inject = ['$compile'];
 
 module.exports = NgNameDirective;
 },{}],28:[function(require,module,exports){
