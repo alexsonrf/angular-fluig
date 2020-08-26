@@ -2035,7 +2035,7 @@ function SwitchDirective($compile, $timeout) {
                         isDisabled = true;
                         FLUIGC.switcher.enable(element);
                     }
-                    $timeout(() => {
+                    $timeout(function() {
                         FLUIGC.switcher.setTrue(element);
 
                         FLUIGC.switcher.isReadOnly(element, isReadOnly);
