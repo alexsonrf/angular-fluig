@@ -27,8 +27,8 @@ function SwitchDirective($compile, $timeout) {
 
                 if (ctrl.$modelValue == true || ctrl.$modelValue == 'true') {
                     
-                    let isReadOnly = false;
-                    let isDisabled = false;
+                    var isReadOnly = false;
+                    var isDisabled = false;
                     if ($(element).attr('readonly') == 'readonly') {
                         isReadOnly = true;
                         FLUIGC.switcher.isReadOnly(element, false);
